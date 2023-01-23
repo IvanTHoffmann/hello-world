@@ -3,14 +3,46 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>my-first-website</title>
+  <title>Ivan Hoffmann</title>
   <LINK href="styles.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 
-  <p>Ivan Hoffmann</p>
-  <a href="https://github.com/IvanTHoffmann/SimpleECS">SimpleECS</a>
+<div id="drawing"></div>
+
+<script>
+
+class Renderer {
+	constructor() {
+		this.ns = 'http://www.w3.org/2000/svg'
+		this.svg = document.createElementNS(this.ns, 'svg')
+		this.svg.setAttributeNS(null, 'width', '100%')
+		this.svg.setAttributeNS(null, 'height', '100%')
+		this.div = document.getElementById('drawing')
+		this.div.appendChild(this.svg)
+	}
+
+	drawLine(x1, y1, x2, y2, w=2, r=0, g=0, b=0){
+		var line = document.createElementNS(this.ns, 'line')
+		line.setAttributeNS(null, 'x1', x1)
+		line.setAttributeNS(null, 'y1', y1)
+		line.setAttributeNS(null, 'x2', x2)
+		line.setAttributeNS(null, 'y2', y2)
+		line.setAttributeNS(null, 'style', 'stroke:rgb('+r+','+g+','+b+');stroke-width:'+w)
+		this.svg.appendChild(line)
+	}
+}
+
+function main() {
+	var rend = new Renderer()
+	rend.drawLine(100, 100, 500, 500)
+}
+
+main()
+
+
+</script>
 
 </body>
 </html>
