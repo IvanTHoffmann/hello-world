@@ -1,17 +1,12 @@
-* {
-  margin:0px;
-  padding:0px;
-}
-
-#octocat {
+html,
+body {
+  background-color: powderblue;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  border: 0;
+  overflow: hidden;
+  /*  Disable scrollbars */
   display: block;
-  width:384px;
-  margin: 50px auto;
-}
-
-p {
-  display: block;
-  width: 400px;
-  margin: 50px auto;
-  font: 30px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+  /* No floating content on sides */
 }
