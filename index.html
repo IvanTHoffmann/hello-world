@@ -1,16 +1,113 @@
 <!DOCTYPE html>
-
 <html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>Ivan Hoffmann</title>
-	<LINK href="styles.css" rel="stylesheet" type="text/css">
-	  <script defer src="index.js" charset="utf-8"></script>
-</head>
-
-<body>
-
-<div id="drawing" style="height: 100%; width: 100%;"></div>
-
-</body>
+	<head>
+		<title>Three Column HTML Layout</title>
+		<link rel="stylesheet" href="styles.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript"> 
+			
+			function toggleRow(row) { $("#" + row).toggle(); }
+			function hideRow(row) { 
+				var $yourUl = $("#" + row); 
+				$yourUl.css("display", 'none');}
+			function showRow(row) { 
+				var $yourUl = $("#" + row); 
+				$yourUl.css("display", '');
+			}
+			function hideAllBut(rowId){
+				for (var i=1; i<=5; i++){
+					var $yourUl = $("#hidden_row" + i); 
+					$yourUl.css("display", i===rowId ? 'table-row': 'none');
+				}
+			}
+			hideAllBut(1);
+		</script>
+		<script defer src="index.js" charset="utf-8"></script>
+	</head>
+	
+	<body>
+		<table id="table_detail" border=1 bgcolor = "#000" width="100%" height="100%">
+			<tr height="40px">
+				<td id="title_bar" colspan="2" text-align="center" align="center">
+					<div style="padding: 10px 0px;">Welcome to My Track Editor</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td width="200" height="50" valign="center" align="center"><b>----------SETTINGS----------</b></td>
+				<td id="editor_window" rowspan="100">
+					<div id="drawing"></div>
+				</td>
+         	</tr>
+			
+			<tr onclick="hideAllBut(1)"> 
+				<td valign="center" align="center" height="25px"> <b>EDIT</b> </td>
+			</tr>
+			<tr id="hidden_row1" class="hidden_row" height="120px" valign="top" align="center" style="display:table-row;">
+				<td> 
+				<br>
+				This is the edit tab. This is where you will adjust the shape of your track.
+				<br><br>
+				slider <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+				<br>
+				</td>
+			</tr>
+			
+			<tr onclick="hideAllBut(2)"> 
+				<td valign="center" align="center" height="25px"> <b>PAINT</b> </td>
+			</tr>
+			<tr id="hidden_row2" class="hidden_row" height="120px" valign="top" align="center">
+				<td> 
+				<br>
+				This is the paint tab. This is where you will adjust the tile colors on your track.
+				<br><br>
+				slider <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+				<br>
+				</td>
+			</tr>
+			
+			<tr onclick="hideAllBut(3)"> 
+				<td valign="center" align="center" height="25px"> <b>SAVE</b> </td>
+			</tr>
+			<tr id="hidden_row3" class="hidden_row" height="120px" valign="top" align="center">
+				<td valign="center" align="center">
+				<br>
+				This is the save tab. This is where you will save your track.
+				<br><br>
+				<a href="data:application/xml;charset=utf-8;" download="filename.html">CSV</a>
+				<br>
+				<a href="data:application/xml;charset=utf-8;" download="filename.html">SVG</a>
+				<br>
+				<a href="data:application/xml;charset=utf-8;" download="filename.html">PNG</a>
+				<br><br>
+				</td>
+			</tr>
+			
+			<tr onclick="hideAllBut(4)"> 
+				<td valign="center" align="center" height="25px"> <b>PLAY</b> </td>
+			</tr>
+			<tr id="hidden_row4" class="hidden_row" height="120px" valign="top" align="center">
+				<td> 
+				<br>
+				This is the play tab. This is where I can put settings related to gameplay.
+				<br><br>
+				slider <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+				<br>
+				</td>
+			</tr>
+			
+			<tr onclick="hideAllBut(5)"> 
+				<td valign="center" align="center" height="25px"> <b>HELP</b> </td>
+			</tr>
+			<tr id="hidden_row5" class="hidden_row" height="120px" valign="top" align="center">
+				<td> 
+				<br>
+				This is the help settings tab. This is where I can put instructions and information about the editor and the game.
+				<br><br>
+				</td>
+			</tr>
+			
+			<tr height="100%"><td></td></tr>
+		</table>
+	</body>
 </html>
