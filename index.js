@@ -226,6 +226,7 @@ function Curve(){
 
 function Application() {
 	this.curve = new Curve()
+	this.mousePos = new Vector(0, 0);
 	
 	var self = this;
 	
@@ -240,7 +241,6 @@ function Application() {
 	}
 	
 	this.onMouseDown = function(event) {
-		var mousePos = new Vector(event.clientX, event.clientY);
 		var maxSqrDist = 100*100;
 		var diff, dist, i;
 		
@@ -250,7 +250,7 @@ function Application() {
 			for (i=0; i < self.curve.nodeCount(); i++) {
 				
 				node = self.curve.getNode(i);
-				diff = node.pos().diff(mousePos);
+				diff = node.pos().diff(self.mousePos);
 				dist = diff.sqrLen();
 				if (dist < maxSqrDist){
 					self.curve.setSelected(i);
@@ -258,7 +258,7 @@ function Application() {
 				}
 			}
 			if (self.curve.selected() === -1){
-				self.curve.addNode(mousePos);
+				self.curve.addNode(self.mousePos);
 				self.curve.setSelected(self.curve.nodeCount() - 1);
 			}
 			break;
@@ -267,7 +267,7 @@ function Application() {
 			for (i=0; i < self.curve.nodeCount(); i++) {
 			
 				node = self.curve.getNode(i);
-				diff = node.pos().diff(mousePos);
+				diff = node.pos().diff(self.mousePos);
 				dist = diff.sqrLen();
 				if (dist < maxSqrDist){
 					self.curve.setSelected(i);
@@ -288,16 +288,16 @@ function Application() {
 	}
 	
 	this.onMouseUp = function(event) {
-		var x = event.clientX;
-		var y = event.clientY;
 		self.curve.setSelected(-1);
 		self.draw();
 	}
 	
 	this.onMouseMove = function(event) {
-		var mousePos = new Vector(event.clientX, event.clientY);
+		var rect = rend.div.getBoundingClientRect();
+		self.mousePos.setx(event.clientX - rect.left);
+		self.mousePos.sety(event.clientY - rect.top);
 		if (self.curve.selected() !== -1){
-			self.curve.getNode(self.curve.selected()).setPos(mousePos);
+			self.curve.getNode(self.curve.selected()).setPos(self.mousePos);
 		}
 		self.draw();
 	}
