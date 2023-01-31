@@ -1,4 +1,5 @@
 html, body {
+	font-family: "Lucida Console", "Courier New", monospace;
 	overflow: hidden;
 	margin: 0;
 	-webkit-user-select: none; /* Safari */
@@ -8,7 +9,10 @@ html, body {
 
 table, tr, td, th {
 	border: 1;
-	padding: 0;
+	padding-top: 10px;
+  	padding-bottom: 10px;
+  	padding-left: 5px;
+  	padding-right: 5px;
 	margin: 0;
 }
 
@@ -20,20 +24,21 @@ table{
 }
 
 tr{
-	background-color: #4EB48E;
+	background-color: #C47438;
 }
 
 #table_detail .hidden_row {
+	font-family: "Open Sans";
 	display: none;
-	background-color: #48A0A4;
+	background-color: #D99F42;
 }
 
 #editor_window {
-	background-color: #5282AE;
+	background-color: #8B8B8C;
 }
 
 #title_bar{
-	background-color: #4EB48E;
+	background-color: #1C4EAA;
 }
 
 #drawing {
