@@ -10,14 +10,14 @@ var context;
 var windowWidth = 1;
 var windowHeight = 1;
 var canvasSize = 1;
-var gameSize = 120;
+var gameSize = 150;
 var gameScale = 1;
 var teams = []
 var lastFrameTime = Date.now();
 
 // gameplay variables
 var score = 100;
-var nEntities = 40;
+var nEntities = 100;
 var betTeam = 0;
 var betTimer = 0;
 var entities = [];
@@ -192,12 +192,18 @@ function updateEntities(dt) {
             alertEntity(b, -relation, -nx, -ny);
         }
 
-        //* avoid walls
+        /* avoid walls #1
         let wall_weight = 10;
         a.move_x += wall_weight/Math.pow(a.x, 3);
         a.move_x -= wall_weight/Math.pow(gameSize-a.x, 3);
         a.move_y += wall_weight/Math.pow(a.y, 3);
         a.move_y -= wall_weight/Math.pow(gameSize-a.y, 3);
+        //*/
+
+        //* avoid walls #2
+        let wall_weight = .0000015;
+        a.move_x += wall_weight * gameSize*(gameSize - 2*a.x);
+        a.move_y += wall_weight * gameSize*(gameSize - 2*a.y);
         //*/
 
         let mx = a.move_x;
