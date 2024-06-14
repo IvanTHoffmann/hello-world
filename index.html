@@ -1,145 +1,29 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Track Editor</title>
-		<link rel="stylesheet" href="styles.css">
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script type="text/javascript"> 
-			
-			function toggleRow(row) { $("#" + row).toggle(); }
-			function hideRow(row) { 
-				var $yourUl = $("#" + row); 
-				$yourUl.css("display", 'none');}
-			function showRow(row) { 
-				var $yourUl = $("#" + row); 
-				$yourUl.css("display", '');
-			}
-			function hideAllBut(rowId){
-				for (var i=1; i<=6; i++){
-					var $yourUl = $("#hidden_row" + i); 
-					$yourUl.css("display", i===rowId ? 'table-row': 'none');
-				}
-			}
-			hideAllBut(1);
-		</script>
-		<script defer src="index.js" charset="utf-8"></script>
-	</head>
-	
-	<body>
-		<table id="table_detail" border=1 bgcolor = "#000" width="100%" height="100%">
-			<!--
-			<tr height="40px">
-				<td id="title_bar" colspan="2" text-align="center" align="center">
-					<div style="padding: 10px 0px;">Welcome to My Track Editor</div>
-				</td>
-			</tr>
-			--->
-			
-			<tr>
-				<td id="title_bar" width="225" height="50" valign="center" align="center"><b>IVAN'S TRACK EDITOR</b></td>
-				<td id="editor_window" rowspan="100">
-					<div id="drawing"></div>
-				</td>
-         	</tr>
-			<tr onclick="hideAllBut(1)"> 
-				<td valign="center" align="center" height="25px"> <b>EDIT</b> </td>
-			</tr>
-			<tr id="hidden_row1" class="hidden_row" valign="top" align="center" style="display:table-row;">
-				<td> 
-				<br>
-				This is the edit tab. This is where you will adjust the shape of your track.
-				<br><br>
-				slider <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				<label for="test_number_input">Test Number Input (1 to 5):</label>
-				<input type="number" id="test_number_input" name="quantity" min="1" max="5" placeholder="3">
-				<br><br>
-				</td>
-			</tr>
-			
-			<tr onclick="hideAllBut(2)"> 
-				<td valign="center" align="center" height="25px"> <b>PAINT</b> </td>
-			</tr>
-			<tr id="hidden_row2" class="hidden_row" height="120px" valign="top" align="center">
-				<td> 
-				<br>
-				This is the paint tab. This is where you will adjust the tile colors on your track.
-				<br><br>
-				slider <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				</td>
-			</tr>
-			
-			<tr onclick="hideAllBut(3)"> 
-				<td valign="center" align="center" height="25px"> <b>SAVE</b> </td>
-			</tr>
-			<tr id="hidden_row3" class="hidden_row" height="120px" valign="top" align="center">
-				<td valign="center" align="center">
-				<br>
-				This is the save tab. This is where you will save your track.
-				<br><br>
-				<a href="data:application/xml;charset=utf-8;" download="filename.html">CSV</a>
-				<br>
-				<a href="data:application/xml;charset=utf-8;" download="filename.html">SVG</a>
-				<br>
-				<a href="data:application/xml;charset=utf-8;" download="filename.html">PNG</a>
-				<br><br>
-				</td>
-			</tr>
-			
-			<tr onclick="hideAllBut(4)"> 
-				<td valign="center" align="center" height="25px"> <b>PLAY</b> </td>
-			</tr>
-			<tr id="hidden_row4" class="hidden_row" height="120px" valign="top" align="center">
-				<td>
-				This is the play tab. This is where I can put settings related to gameplay.
-				<br><br>
-				<div align="right">
-				Laps: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Health: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Nitro: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Gas: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Brakes: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Tires: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Num Bots: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				<br>
-				Num Players: <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-				</div>
-				</td>
-			</tr>
-			
-			<tr id="title_bar" height="100%"><td></td></tr>
 
-			<tr onclick="hideAllBut(5)"> 
-				<td valign="center" align="center" height="25px"> <b>HELP</b> </td>
-			</tr>
-			<tr id="hidden_row5" class="hidden_row" height="120px" valign="top" align="center">
-				<td> 
-				<br>
-				This is the help settings tab. This is where I can put instructions and information about the editor and how to use it.
-				<br><br>
-				</td>
-			</tr>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPS Demo</title>
+    <link rel="stylesheet" href="rps.css">
+    <script src="rps.js"></script>
+</head>
 
-			<tr onclick="hideAllBut(6)"><td valign="center" align="center" height="25px">
-				<b>GAMEPLAY RULES</b>
-			</td></tr>
-			<tr id="hidden_row6" class="hidden_row" height="120px" valign="top" align="center">
-				<td> 
-				<br>
-				This is the gameplay rules tab. It will contain information about how to play the game. 
-				<br><br>
-				<a href="https://docs.google.com/document/d/1KXPLARG3_TZsRA1IDlvFM_Rmp0kcxy6WOjR7IENGScs/edit?usp=sharing" target="_blank">
-				Rule Book<br>(Google Docs Link)</a>
-				<br><br>
-				</td>
-			</tr>
-		</table>
-	</body>
+<body>
+    <div style="text-align: center;">
+        <h1>RPS Demo</h1>
+        <label id="score">Score</label>
+        <div>
+            <canvas id="canvas"></canvas>
+            <!-- <canvas id="canvas2"></canvas> -->
+        </div>
+        <div>
+            <button onclick="placeBet(0)">Red</button>
+            <button onclick="placeBet(1)">Green</button>
+            <button onclick="placeBet(2)">Blue</button>
+        </div>
+        <label id="curBet">current bet</label>
+    </div>
+</body>
+
 </html>
