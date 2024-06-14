@@ -3,7 +3,7 @@
 var html_score;
 var html_debug;
 var html_canvas;
-var html_curBet;
+var html_betTime;
 var context;
 
 // back-end variables
@@ -18,12 +18,16 @@ var lastFrameTime = Date.now();
 // gameplay variables
 var score = 100;
 var nEntities = 40;
-var teamBet = 0;
+var betTeam = 0;
+var betTimer = 0;
 var entities = [];
 
 // "structs"
-function team(color){
+function team(color, agression, spread, fear){
     this.color = color;
+    this.agression = agression;
+    this.spread = spread;
+    this.fear = fear;
     this.last_population = 0;
     this.population = 0;
 }
@@ -43,21 +47,38 @@ window.onload = function(){
     html_score = document.getElementById("score");
     html_debug = document.getElementById("debug");
     html_canvas = document.getElementById("canvas");
-    html_curBet = document.getElementById("curBet");
+    html_betTime = document.getElementById("betTime");
     context = html_canvas.getContext("2d");
     
+    window.addEventListener('keydown', onkeydown);
+    window.addEventListener('keyup', onkeyup);
+
     requestAnimationFrame(update);
     arrangeElements();
 
-    teams.push(new team("red"));
-    teams.push(new team("green"));
-    teams.push(new team("blue"));
+    teams.push(new team("red",      1.5, 0.1, 1.0));
+    teams.push(new team("green",    1.0, 0.5, 1.0));
+    teams.push(new team("blue",     1.0, 0.1, 2.0));
     
     newGame();
 }
 
 window.onresize = function(){
     arrangeElements();
+}
+
+function onkeydown(e){
+    if (e.key == '1'){
+        placeBet(0);
+    } else if (e.key == '2'){
+        placeBet(1);
+    } else if (e.key == '3'){
+        placeBet(2);
+    }
+}
+
+function onkeyup(e){
+    console.log(e);
 }
 
 function arrangeElements(){
@@ -99,24 +120,24 @@ function getRelation(a, b){
     if (a == b){
         return 0;
     }
-    return (((a - b + 5 ) % 5) % 2) * 2 - 1;
+    return -((((a - b + 5) % 5) % 2) * 2 - 1);
 }
 
 function alertEntity(ent, relation, nx, ny) {
     if (relation == 1){
         // found a target
-        ent.move_x += nx;
-        ent.move_y += ny;
+        ent.move_x += nx * teams[ent.team].agression;
+        ent.move_y += ny * teams[ent.team].agression;
     }
     else if (relation == 0){
         // found a team mate
-        ent.move_x -= nx * .1;
-        ent.move_y -= ny * .1;
+        ent.move_x -= nx * teams[ent.team].spread;
+        ent.move_y -= ny * teams[ent.team].spread;
     }
     else if (relation == -1){
         // found a threat
-        ent.move_x -= nx;
-        ent.move_y -= ny;
+        ent.move_x -= nx * teams[ent.team].fear;
+        ent.move_y -= ny * teams[ent.team].fear;
     }
 }
 
@@ -228,9 +249,17 @@ function update(){
 
     updateEntities(dt);
 
-    if (teams[teamBet].last_population){
-        setScore(score * teams[teamBet].population / teams[teamBet].last_population);
+    betTimer += dt;
+    let betMultiplier = Math.floor(betTimer / 10000) + 1;
+    
+
+    if (teams[betTeam].last_population){
+        let popChange = teams[betTeam].population / teams[betTeam].last_population;
+        setScore(score * popChange);
+        //setScore(score * (1 - (1 - popChange) * betMultiplier));
     }
+    
+    //html_betTime.textContent = "Bet Multiplier: " + betMultiplier;
 
     context.clearRect(0, 0, canvasSize, canvasSize);
     drawEntities();
@@ -238,12 +267,13 @@ function update(){
 
 function setScore(inScore){
     score = Math.floor(inScore);
-    html_score.textContent = score;
+    html_score.textContent = "Score: " + score;
 }
 
 function placeBet(inBet){
-    teamBet = inBet;
-    html_curBet.textContent = "current bet: " + teams[teamBet].color;
+    betTeam = inBet;
+    betTimer = 0;
+    html_score.style = "color: " + teams[betTeam].color;
 }
 
 function log(msg){

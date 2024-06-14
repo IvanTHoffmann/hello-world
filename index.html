@@ -12,7 +12,13 @@
 <body>
     <div style="text-align: center;">
         <h1>RPS Demo</h1>
-        <label id="score">Score</label>
+        <h2 id="score">Score</h2>
+        <!--
+        <div style="display:flex; flex-direction: row; align-items: center;">
+            <h2 id="betTime">Bet Time</h2>
+        </div>
+        -->
+        
         <div>
             <canvas id="canvas"></canvas>
             <!-- <canvas id="canvas2"></canvas> -->
@@ -22,7 +28,19 @@
             <button onclick="placeBet(1)">Green</button>
             <button onclick="placeBet(2)">Blue</button>
         </div>
-        <label id="curBet">current bet</label>
+
+        <p style="text-align: left;">
+            <b>Controls:</b><br>
+                0 - Bet Red<br>
+                1 - Bet Green<br>
+                2 - Bet Blue<br>
+            <br>
+            <b>Instructions:</b><br>
+                Bet on colors to increase your score. Your current bet is shown by the color of your score.
+                Betting on a color scales your score with the population of that color.<br>
+                EX: If you bet on green, and green's population increases by 20%, your score will also increase by 20%.
+        </p>
+        
     </div>
 </body>
 
