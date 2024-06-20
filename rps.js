@@ -3,21 +3,25 @@
 var html_score;
 var html_debug;
 var html_canvas;
-var html_betTime;
 var context;
+var html_graph;
+var graph_context;
 
 // back-end variables
 var windowWidth = 1;
 var windowHeight = 1;
 var canvasSize = 1;
-var gameSize = 150;
+var gameSize = 90;
 var gameScale = 1;
 var teams = []
 var lastFrameTime = Date.now();
+var popHistoryFrames = 60 * 20;
+var graphHeight = .2;
 
 // gameplay variables
 var score = 100;
-var nEntities = 100;
+var nEntities = 60;
+var energizeTime = 500;
 var betTeam = 0;
 var betTimer = 0;
 var entities = [];
@@ -30,6 +34,7 @@ function team(color, agression, spread, fear){
     this.fear = fear;
     this.last_population = 0;
     this.population = 0;
+    this.popHistory = new Array(popHistoryFrames);
 }
 
 function entity(x, y, r, team){
@@ -39,7 +44,8 @@ function entity(x, y, r, team){
     this.team = team;
     this.move_x = 0;
     this.move_y = 0;
-    this.speed = .007;
+    this.speed = .007 * .5;
+    this.energy = 0;
 }
 
 // window callbacks
@@ -47,8 +53,10 @@ window.onload = function(){
     html_score = document.getElementById("score");
     html_debug = document.getElementById("debug");
     html_canvas = document.getElementById("canvas");
-    html_betTime = document.getElementById("betTime");
+    html_graph = document.getElementById("graph");
     context = html_canvas.getContext("2d");
+    graph_context = html_graph.getContext("2d");
+
     
     window.addEventListener('keydown', onkeydown);
     window.addEventListener('keyup', onkeyup);
@@ -56,9 +64,11 @@ window.onload = function(){
     requestAnimationFrame(update);
     arrangeElements();
 
-    teams.push(new team("red",      1.5, 0.1, 1.0));
-    teams.push(new team("green",    1.0, 0.5, 1.0));
-    teams.push(new team("blue",     1.0, 0.1, 2.0));
+    teams.push(new team("red",                  1.0, 0.1, 1.0));
+    teams.push(new team("LightGreen",           1.0, 0.1, 1.0));
+    teams.push(new team("CornflowerBlue",       1.0, 0.1, 1.0));
+    teams.push(new team("white",                1.0, 0.1, 1.0));
+    teams.push(new team("yellow",               1.0, 0.1, 1.0));
     
     newGame();
 }
@@ -74,6 +84,10 @@ function onkeydown(e){
         placeBet(1);
     } else if (e.key == '3'){
         placeBet(2);
+    } else if (e.key == '4'){
+        placeBet(3);
+    } else if (e.key == '5'){
+        placeBet(4);
     }
 }
 
@@ -91,6 +105,8 @@ function arrangeElements(){
     }
     html_canvas.width = canvasSize;
     html_canvas.height = canvasSize;
+    html_graph.width = canvasSize;
+    html_graph.height = canvasSize * graphHeight;
     gameScale = canvasSize/gameSize;
 }
 
@@ -176,12 +192,14 @@ function updateEntities(dt) {
                     teams[a.team].population++;
                     teams[b.team].population--;
                     b.team = a.team;
+                    b.energy = 0;
                 }
                 else if (relation == -1) {
                     // capture a
                     teams[a.team].population--;
                     teams[b.team].population++;
                     a.team = b.team;
+                    a.energy = 0;
                 }
             }
             let fourth_dist = Math.sqrt(sqr_dist) * sqr_dist;
@@ -192,18 +210,21 @@ function updateEntities(dt) {
             alertEntity(b, -relation, -nx, -ny);
         }
 
-        /* avoid walls #1
+        //* avoid walls #1
         let wall_weight = 10;
-        a.move_x += wall_weight/Math.pow(a.x, 3);
-        a.move_x -= wall_weight/Math.pow(gameSize-a.x, 3);
-        a.move_y += wall_weight/Math.pow(a.y, 3);
-        a.move_y -= wall_weight/Math.pow(gameSize-a.y, 3);
+        let exp = 4;
+        a.move_x += wall_weight/Math.pow(a.x, exp);
+        a.move_x -= wall_weight/Math.pow(gameSize-a.x, exp);
+        a.move_y += wall_weight/Math.pow(a.y, exp);
+        a.move_y -= wall_weight/Math.pow(gameSize-a.y, exp);
         //*/
 
-        //* avoid walls #2
-        let wall_weight = .0000015;
-        a.move_x += wall_weight * gameSize*(gameSize - 2*a.x);
-        a.move_y += wall_weight * gameSize*(gameSize - 2*a.y);
+        /* avoid walls #2
+        let wall_weight = .00001;
+        let dx = wall_weight * gameSize*(gameSize - 2*a.x);
+        let dy = wall_weight * gameSize*(gameSize - 2*a.y);
+        a.move_x += dx * Math.abs(dx);
+        a.move_y += dy * Math.abs(dy);
         //*/
 
         let mx = a.move_x;
@@ -216,12 +237,18 @@ function updateEntities(dt) {
         if (sqr_move_mag == 0){
             return;
         }
+
+        let speedFactor = 3;
+        //speedFactor *= 2 - (teams[a.team].population / nEntities) * 1;
+        //speedFactor *= (a.energy / energizeTime)**2 + 1;
         
-        let move_coeff = a.speed * dt / Math.sqrt(sqr_move_mag);
+        let move_coeff = a.speed * speedFactor * dt / Math.sqrt(sqr_move_mag);
         a.x += mx * move_coeff;
         a.y += my * move_coeff;
         a.x = clamp(a.x, a.r, gameSize-a.r);
         a.y = clamp(a.y, a.r, gameSize-a.r);
+
+        a.energy = Math.min(a.energy + dt, energizeTime);
     }
 }
 
@@ -238,7 +265,6 @@ function drawRect(x, y, r, color){
 
 function drawEntities(){
     for (ent of entities){
-        //drawRect(ent.x, ent.y, ent.r, "black");
         drawRect(ent.x, ent.y, ent.r, teams[ent.team].color);
     }
 }
@@ -255,24 +281,52 @@ function update(){
 
     updateEntities(dt);
 
-    betTimer += dt;
-    let betMultiplier = Math.floor(betTimer / 10000) + 1;
+    let captureOccurred = false;
+    for (t of teams){
+        captureOccurred = (t.last_population != t.population) || captureOccurred;
+    }
+    if (captureOccurred){
+        for (t of teams){
+            t.popHistory.shift();
+            t.popHistory.push(t.last_population);
+        }
+        drawGraph();
+    }
     
-
     if (teams[betTeam].last_population){
         let popChange = teams[betTeam].population / teams[betTeam].last_population;
         setScore(score * popChange);
-        //setScore(score * (1 - (1 - popChange) * betMultiplier));
     }
-    
-    //html_betTime.textContent = "Bet Multiplier: " + betMultiplier;
 
     context.clearRect(0, 0, canvasSize, canvasSize);
     drawEntities();
 }
 
+function drawGraph(){
+    let stepSize = canvasSize / popHistoryFrames;
+    let bottom = canvasSize * graphHeight;
+    let tickSize = bottom / nEntities;
+    graph_context.clearRect(0, 0, canvasSize, canvasSize/2);
+    for (t of teams){
+        graph_context.beginPath();
+        graph_context.lineWidth = 1;
+        graph_context.strokeStyle = t.color;
+        for (let pID = 0; pID < t.popHistory.length; pID++){
+            let x = pID * stepSize;
+            let y = bottom - t.popHistory[pID] * tickSize;
+            if (pID){
+                graph_context.lineTo(x, y);
+            }
+            else {
+                graph_context.moveTo(x, y);
+            }
+        }
+        graph_context.stroke();
+    }
+}
+
 function setScore(inScore){
-    score = Math.floor(inScore);
+    score = Math.ceil(inScore);
     html_score.textContent = "Score: " + score;
 }
 

@@ -7,3 +7,11 @@ body {
 #canvas{
     background-color: rgb(41, 0, 0);
 }
+
+#graph{
+    background-color: black;
+}
+
+#score{
+    background-color: black;
+}
